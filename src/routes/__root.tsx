@@ -9,6 +9,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/sonner'
 import type { ReactNode } from 'react'
 import indexCss from '../index.css?url'
+import { IntroOverlay, introInitScript } from '@/components/brand/intro-overlay'
 
 /**
  * Pre-paint theme script. Runs synchronously in <head> BEFORE first paint, so
@@ -77,6 +78,7 @@ function RootDocument({ children }: { children: ReactNode }) {
         {/* MUST be first: sets the theme class before paint so there is no
             flash-of-wrong-theme. Do not move below <HeadContent />. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: introInitScript }} />
         <HeadContent />
         {/*
           WebSite + Organization entity (rendered on every page, once at the root).
@@ -98,6 +100,7 @@ function RootDocument({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <IntroOverlay />
         <QueryClientProvider client={queryClient}>
           <TooltipProvider delayDuration={0}>
             <Toaster />
