@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuhnke Immobilien — Intro Konzept B, „Dunkler Vorhang“</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #fffffe;
+    --ink: #1a1a1c;
+    --gold: #b08d57;
+    --muted: #f4f2ee;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ---------------------------------------------------------
+     MOCK SEITE (liegt hinter dem Intro-Overlay)
+  --------------------------------------------------------- */
+
+  .mock-page{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transform: scale(1.02);
+    transform-origin: 50% 40%;
+  }
+
+  .mock-page.play{
+    animation: pageSettle 0.5s cubic-bezier(0.22,1,0.36,1) 2.05s forwards;
+  }
+
+  @keyframes pageSettle{
+    to{ transform: scale(1); }
+  }
+
+  header.site{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 6vw;
+    border-bottom: 1px solid rgba(26,26,28,0.08);
+  }
+
+  .brand-mini{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-mini svg{
+    width: 26px;
+    height: auto;
+    display: block;
+  }
+
+  .brand-mini .wordmark-mini{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .site-nav{
+    display: flex;
+    gap: 32px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .site-nav span{ opacity: 0.55; }
+
+  @media (max-width: 640px){
+    .site-nav{ display: none; }
+  }
+
+  .hero{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12vh 6vw 16vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(176,141,87,0.07), transparent 60%),
+      var(--bg);
+  }
+
+  .hero .eyebrow{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 22px;
+  }
+
+  .hero h1{
+    font-family: 'Lora', serif;
+    font-weight: 500;
+    font-size: clamp(34px, 6vw, 76px);
+    line-height: 1.12;
+    margin: 0 0 24px;
+    max-width: 16ch;
+    color: var(--ink);
+  }
+
+  .hero p.sub{
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(26,26,28,0.62);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  .hero .divider{
+    width: 46px;
+    height: 1px;
+    background: var(--gold);
+    margin: 34px 0;
+  }
+
+  footer.site{
+    padding: 22px 6vw;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26,26,28,0.4);
+    text-align: center;
+    border-top: 1px solid rgba(26,26,28,0.08);
+  }
+
+  /* ---------------------------------------------------------
+     INTRO OVERLAY — Konzept B: "Dunkler Vorhang"
+  --------------------------------------------------------- */
+
+  #intro{
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  #intro.play{
+    animation: introHide 0.01s linear 2.55s forwards;
+  }
+
+  @keyframes introHide{
+    to{ visibility: hidden; pointer-events: none; }
+  }
+
+  .curtain{
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: var(--ink);
+    will-change: transform;
+  }
+
+  .curtain-top{ top: 0; }
+  .curtain-bottom{ bottom: 0; }
+
+  #intro.play .curtain-top{
+    animation: curtainUp 0.5s cubic-bezier(0.7,0,0.2,1) 2.05s forwards;
+  }
+
+  #intro.play .curtain-bottom{
+    animation: curtainDown 0.5s cubic-bezier(0.7,0,0.2,1) 2.05s forwards;
+  }
+
+  @keyframes curtainUp{
+    to{ transform: translateY(-100%); }
+  }
+
+  @keyframes curtainDown{
+    to{ transform: translateY(100%); }
+  }
+
+  .intro-content{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  #intro.play .intro-content{
+    animation: contentFade 0.5s cubic-bezier(0.7,0,0.2,1) 2.05s forwards;
+  }
+
+  @keyframes contentFade{
+    to{ opacity: 0; }
+  }
+
+  .intro-logo-wrap{
+    position: relative;
+    width: 132px;
+    height: 175.6px; /* 132 * (1330/1000) */
+  }
+
+  .intro-logo-wrap svg{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  /* K — zeichnet sich zuerst, von oben nach unten */
+  #k-svg{
+    clip-path: inset(0 0 100% 0);
+  }
+
+  #intro.play #k-svg{
+    animation: kReveal 0.7s cubic-bezier(0.7,0,0.2,1) 0s forwards;
+  }
+
+  @keyframes kReveal{
+    to{ clip-path: inset(0 0 0% 0); }
+  }
+
+  #k-svg .k-path{ fill: var(--gold); }
+
+  /* Löwe — taucht danach aus dem Dunkeln auf */
+  #lion-svg{
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  #intro.play #lion-svg{
+    animation: lionReveal 0.55s cubic-bezier(0.22,1,0.36,1) 0.55s forwards;
+  }
+
+  @keyframes lionReveal{
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  #lion-svg .lion-path{ fill: var(--bg); }
+
+  .gold-line{
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    margin: 26px 0 20px;
+  }
+
+  #intro.play .gold-line{
+    animation: lineGrow 0.35s cubic-bezier(0.22,1,0.36,1) 1s forwards;
+  }
+
+  @keyframes lineGrow{
+    to{ width: 180px; }
+  }
+
+  .intro-wordmark{
+    display: flex;
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    color: var(--bg);
+    font-weight: 500;
+  }
+
+  .intro-wordmark span{
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(6px);
+    white-space: pre;
+  }
+
+  #intro.play .intro-wordmark span{
+    animation-name: letterReveal;
+    animation-duration: 0.42s;
+    animation-timing-function: cubic-bezier(0.22,1,0.36,1);
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes letterReveal{
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  .intro-claim{
+    margin-top: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+  }
+
+  #intro.play .intro-claim{
+    animation: claimFade 0.4s cubic-bezier(0.22,1,0.36,1) 1.75s forwards;
+  }
+
+  @keyframes claimFade{
+    to{ opacity: 0.85; }
+  }
+
+  @media (max-width: 480px){
+    .intro-logo-wrap{ width: 104px; height: 138.3px; }
+    .intro-wordmark{ font-size: 18px; }
+    .gold-line{ margin: 20px 0 16px; }
+    #intro.play .gold-line{ animation-name: lineGrowMobile; }
+    @keyframes lineGrowMobile{ to{ width: 130px; } }
+  }
+
+  /* ---------------------------------------------------------
+     REPLAY BUTTON
+  --------------------------------------------------------- */
+
+  .replay-btn{
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 200;
+    background: transparent;
+    border: 1px solid rgba(26,26,28,0.25);
+    color: var(--ink);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+  }
+
+  .replay-btn:hover{
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(176,141,87,0.06);
+  }
+
+  @media (max-width: 480px){
+    .replay-btn{
+      right: 16px;
+      bottom: 16px;
+      padding: 10px 16px;
+      font-size: 10px;
+    }
+  }
+
+  /* ---------------------------------------------------------
+     REDUCED MOTION — kein Intro
+  --------------------------------------------------------- */
+
+  @media (prefers-reduced-motion: reduce){
+    #intro{ display: none !important; }
+    .mock-page{ transform: none !important; animation: none !important; }
+    .curtain, .intro-content, #k-svg, #lion-svg, .gold-line, .intro-wordmark span, .intro-claim{
+      animation: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===================== MOCK SEITE ===================== -->
+  <div class="mock-page play" id="mockPage">
+    <header class="site">
+      <div class="brand-mini">
+        <svg viewBox="500 380 1000 1330" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g transform="translate(0 2000) scale(0.1 -0.1)" fill="#1a1a1c"><path d="M7625 15613 c-243 -34 -455 -192 -573 -428 -41 -82 -86 -230 -108 -350 -25 -139 -25 -442 0 -620 60 -435 179 -791 408 -1222 l92 -172 28 20 c48 34 1825 1940 1836 1969 7 19 -354 309 -536 431 -402 267 -851 413 -1147 372z"/><path d="M11305 14859 c-87 -12 -209 -54 -298 -102 -45 -24 -152 -103 -254 -187 -151 -125 -220 -193 -502 -495 -180 -192 -491 -521 -692 -730 -200 -210 -499 -527 -664 -705 -165 -179 -388 -417 -495 -529 -309 -324 -577 -619 -873 -960 l-107 -123 103 -82 c56 -45 498 -397 982 -781 1183 -939 1618 -1296 2010 -1649 1051 -948 1629 -1774 1841 -2631 64 -261 78 -385 78 -695 0 -236 -3 -296 -22 -420 -62 -398 -153 -681 -349 -1083 -64 -131 -113 -240 -111 -243 7 -6 241 252 379 417 629 750 965 1436 1044 2133 12 104 7 387 -9 498 -72 503 -321 946 -730 1297 -50 43 -190 151 -311 241 -291 216 -399 305 -525 436 -173 179 -234 288 -340 604 -34 99 -76 216 -95 261 -70 167 -194 332 -378 504 -58 54 -105 101 -103 102 5 5 179 -39 364 -93 401 -116 658 -247 765 -391 l38 -51 92 -11 c341 -44 593 -29 947 55 269 64 514 151 744 264 138 67 293 161 319 193 106 130 229 591 231 867 1 170 -13 186 -366 405 -178 111 -203 130 -318 245 -69 69 -136 140 -148 158 l-24 33 59 -27 c194 -87 276 -114 386 -129 253 -34 627 -45 857 -25 126 11 278 36 300 50 10 6 -2 27 -54 87 -244 280 -609 643 -1246 1238 -140 131 -263 245 -273 255 -17 16 -16 23 42 184 87 241 87 216 -5 326 -90 109 -381 403 -539 545 -332 298 -639 501 -935 619 -274 108 -590 157 -815 125z m590 -1735 c259 -25 430 -59 501 -100 51 -29 160 -145 237 -252 67 -93 167 -256 167 -272 0 -6 -19 2 -42 18 -114 76 -233 135 -318 156 -36 8 -139 25 -230 36 -243 31 -289 44 -404 112 -87 52 -286 201 -351 264 l-50 49 40 6 c55 9 259 1 450 -17z"/><path d="M14993 11207 c-76 -57 -179 -138 -230 -180 -90 -76 -92 -79 -117 -155 -14 -42 -48 -165 -75 -272 -52 -205 -122 -453 -171 -607 l-30 -92 41 -103 c52 -130 60 -139 91 -104 64 73 239 394 334 611 151 348 351 1005 306 1005 -6 0 -73 -46 -149 -103z"/><path d="M14140 9633 c-315 -156 -724 -296 -1095 -373 -258 -53 -422 -72 -677 -77 -144 -4 -238 -9 -238 -15 0 -24 84 -179 130 -240 230 -305 763 -580 1270 -654 237 -34 396 1 542 120 192 156 312 468 311 806 0 160 -18 271 -54 342 -31 61 -76 125 -91 129 -7 2 -51 -15 -98 -38z"/><path d="M6926 9557 c-10 -83 -7 -960 4 -1202 27 -582 103 -1019 256 -1467 216 -632 603 -1217 1087 -1646 288 -255 517 -407 1122 -747 341 -191 478 -273 632 -376 518 -347 889 -747 1166 -1260 44 -79 85 -153 94 -164 14 -20 14 -20 29 0 70 93 259 564 329 821 136 497 140 1071 9 1602 -224 914 -811 1663 -2006 2560 -260 195 -405 298 -1185 840 -737 512 -899 628 -1249 893 -121 92 -234 174 -251 182 l-30 16 -7 -52z"/></g>
+          <g transform="translate(0 2000) scale(0.1 -0.1)" fill="#b08d57"><path d="M5576 11873 c2 -4026 1 -3953 45 -4221 121 -731 588 -1379 1359 -1884 223 -146 690 -404 690 -381 0 12 -43 71 -166 228 -445 570 -728 1263 -823 2015 -44 350 -46 413 -42 1510 1 575 5 1047 7 1049 5 5 131 -89 320 -240 388 -311 985 -751 1509 -1114 224 -155 339 -234 405 -280 25 -17 90 -62 145 -100 504 -347 999 -722 1360 -1031 189 -161 599 -571 731 -729 530 -638 795 -1201 901 -1910 14 -94 17 -185 18 -425 0 -345 -7 -421 -66 -705 -22 -104 -38 -201 -36 -215 l4 -25 8 25 c5 14 49 106 98 205 107 216 170 368 231 552 405 1245 66 2406 -1061 3629 -335 364 -719 720 -1293 1198 -325 271 -533 438 -1620 1301 -470 373 -861 683 -868 690 -12 10 7 37 106 152 195 226 548 618 682 758 214 223 455 480 709 755 135 146 429 459 655 695 532 557 527 552 771 815 168 181 246 255 396 380 247 205 360 262 574 293 l90 14 -71 21 c-212 65 -571 92 -976 74 -145 -7 -334 -19 -422 -27 -137 -12 -163 -17 -195 -38 -78 -52 -238 -208 -418 -405 -423 -465 -1688 -1821 -1812 -1942 -31 -31 -117 -123 -193 -206 -75 -83 -257 -274 -405 -424 l-268 -273 -6 54 c-8 72 -15 2005 -11 3114 l3 890 -533 3 -533 2 1 -3847z"/></g>
+        </svg>
+        <span class="wordmark-mini">Kuhnke Immobilien</span>
+      </div>
+      <nav class="site-nav">
+        <span>Immobilien</span>
+        <span>Über uns</span>
+        <span>Referenzen</span>
+        <span>Kontakt</span>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <p class="eyebrow">Kuhnke Immobilien &nbsp;·&nbsp; Berlin</p>
+      <h1>Immobilien mit Weitblick.</h1>
+      <div class="divider"></div>
+      <p class="sub">Diskrete Beratung, sorgfältige Auswahl und ein geschultes Auge für Lagen mit Zukunft — seit über einem Jahrzehnt in Berlin.</p>
+    </main>
+
+    <footer class="site">Kuhnke Immobilien — Berlin mit Weitblick</footer>
+  </div>
+
+  <!-- ===================== INTRO OVERLAY ===================== -->
+  <div id="intro" class="play" aria-hidden="true">
+    <div class="curtain curtain-top"></div>
+    <div class="curtain curtain-bottom"></div>
+
+    <div class="intro-content">
+      <div class="intro-logo-wrap">
+        <svg id="k-svg" viewBox="500 380 1000 1330" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(0 2000) scale(0.1 -0.1)" class="k-path"><path d="M5576 11873 c2 -4026 1 -3953 45 -4221 121 -731 588 -1379 1359 -1884 223 -146 690 -404 690 -381 0 12 -43 71 -166 228 -445 570 -728 1263 -823 2015 -44 350 -46 413 -42 1510 1 575 5 1047 7 1049 5 5 131 -89 320 -240 388 -311 985 -751 1509 -1114 224 -155 339 -234 405 -280 25 -17 90 -62 145 -100 504 -347 999 -722 1360 -1031 189 -161 599 -571 731 -729 530 -638 795 -1201 901 -1910 14 -94 17 -185 18 -425 0 -345 -7 -421 -66 -705 -22 -104 -38 -201 -36 -215 l4 -25 8 25 c5 14 49 106 98 205 107 216 170 368 231 552 405 1245 66 2406 -1061 3629 -335 364 -719 720 -1293 1198 -325 271 -533 438 -1620 1301 -470 373 -861 683 -868 690 -12 10 7 37 106 152 195 226 548 618 682 758 214 223 455 480 709 755 135 146 429 459 655 695 532 557 527 552 771 815 168 181 246 255 396 380 247 205 360 262 574 293 l90 14 -71 21 c-212 65 -571 92 -976 74 -145 -7 -334 -19 -422 -27 -137 -12 -163 -17 -195 -38 -78 -52 -238 -208 -418 -405 -423 -465 -1688 -1821 -1812 -1942 -31 -31 -117 -123 -193 -206 -75 -83 -257 -274 -405 -424 l-268 -273 -6 54 c-8 72 -15 2005 -11 3114 l3 890 -533 3 -533 2 1 -3847z"/></g>
+        </svg>
+        <svg id="lion-svg" viewBox="500 380 1000 1330" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(0 2000) scale(0.1 -0.1)" class="lion-path"><path d="M7625 15613 c-243 -34 -455 -192 -573 -428 -41 -82 -86 -230 -108 -350 -25 -139 -25 -442 0 -620 60 -435 179 -791 408 -1222 l92 -172 28 20 c48 34 1825 1940 1836 1969 7 19 -354 309 -536 431 -402 267 -851 413 -1147 372z"/><path d="M11305 14859 c-87 -12 -209 -54 -298 -102 -45 -24 -152 -103 -254 -187 -151 -125 -220 -193 -502 -495 -180 -192 -491 -521 -692 -730 -200 -210 -499 -527 -664 -705 -165 -179 -388 -417 -495 -529 -309 -324 -577 -619 -873 -960 l-107 -123 103 -82 c56 -45 498 -397 982 -781 1183 -939 1618 -1296 2010 -1649 1051 -948 1629 -1774 1841 -2631 64 -261 78 -385 78 -695 0 -236 -3 -296 -22 -420 -62 -398 -153 -681 -349 -1083 -64 -131 -113 -240 -111 -243 7 -6 241 252 379 417 629 750 965 1436 1044 2133 12 104 7 387 -9 498 -72 503 -321 946 -730 1297 -50 43 -190 151 -311 241 -291 216 -399 305 -525 436 -173 179 -234 288 -340 604 -34 99 -76 216 -95 261 -70 167 -194 332 -378 504 -58 54 -105 101 -103 102 5 5 179 -39 364 -93 401 -116 658 -247 765 -391 l38 -51 92 -11 c341 -44 593 -29 947 55 269 64 514 151 744 264 138 67 293 161 319 193 106 130 229 591 231 867 1 170 -13 186 -366 405 -178 111 -203 130 -318 245 -69 69 -136 140 -148 158 l-24 33 59 -27 c194 -87 276 -114 386 -129 253 -34 627 -45 857 -25 126 11 278 36 300 50 10 6 -2 27 -54 87 -244 280 -609 643 -1246 1238 -140 131 -263 245 -273 255 -17 16 -16 23 42 184 87 241 87 216 -5 326 -90 109 -381 403 -539 545 -332 298 -639 501 -935 619 -274 108 -590 157 -815 125z m590 -1735 c259 -25 430 -59 501 -100 51 -29 160 -145 237 -252 67 -93 167 -256 167 -272 0 -6 -19 2 -42 18 -114 76 -233 135 -318 156 -36 8 -139 25 -230 36 -243 31 -289 44 -404 112 -87 52 -286 201 -351 264 l-50 49 40 6 c55 9 259 1 450 -17z"/><path d="M14993 11207 c-76 -57 -179 -138 -230 -180 -90 -76 -92 -79 -117 -155 -14 -42 -48 -165 -75 -272 -52 -205 -122 -453 -171 -607 l-30 -92 41 -103 c52 -130 60 -139 91 -104 64 73 239 394 334 611 151 348 351 1005 306 1005 -6 0 -73 -46 -149 -103z"/><path d="M14140 9633 c-315 -156 -724 -296 -1095 -373 -258 -53 -422 -72 -677 -77 -144 -4 -238 -9 -238 -15 0 -24 84 -179 130 -240 230 -305 763 -580 1270 -654 237 -34 396 1 542 120 192 156 312 468 311 806 0 160 -18 271 -54 342 -31 61 -76 125 -91 129 -7 2 -51 -15 -98 -38z"/><path d="M6926 9557 c-10 -83 -7 -960 4 -1202 27 -582 103 -1019 256 -1467 216 -632 603 -1217 1087 -1646 288 -255 517 -407 1122 -747 341 -191 478 -273 632 -376 518 -347 889 -747 1166 -1260 44 -79 85 -153 94 -164 14 -20 14 -20 29 0 70 93 259 564 329 821 136 497 140 1071 9 1602 -224 914 -811 1663 -2006 2560 -260 195 -405 298 -1185 840 -737 512 -899 628 -1249 893 -121 92 -234 174 -251 182 l-30 16 -7 -52z"/></g>
+        </svg>
+      </div>
+
+      <div class="gold-line"></div>
+
+      <div class="intro-wordmark" aria-hidden="true">
+        <span style="animation-delay:1.10s">K</span><span style="animation-delay:1.13s">u</span><span style="animation-delay:1.16s">h</span><span style="animation-delay:1.19s">n</span><span style="animation-delay:1.22s">k</span><span style="animation-delay:1.25s">e</span><span style="animation-delay:1.28s">&nbsp;</span><span style="animation-delay:1.31s">I</span><span style="animation-delay:1.34s">m</span><span style="animation-delay:1.37s">m</span><span style="animation-delay:1.40s">o</span><span style="animation-delay:1.43s">b</span><span style="animation-delay:1.46s">i</span><span style="animation-delay:1.49s">l</span><span style="animation-delay:1.52s">i</span><span style="animation-delay:1.55s">e</span><span style="animation-delay:1.58s">n</span>
+      </div>
+
+      <div class="intro-claim">Berlin mit Weitblick</div>
+    </div>
+  </div>
+
+  <button class="replay-btn" id="replayBtn" type="button">Replay</button>
+
+  <script>
+    (function(){
+      var intro = document.getElementById('intro');
+      var mockPage = document.getElementById('mockPage');
+      var btn = document.getElementById('replayBtn');
+
+      btn.addEventListener('click', function(){
+        intro.classList.remove('play');
+        mockPage.classList.remove('play');
+        // Force reflow so removing/re-adding the class restarts the CSS animations.
+        void intro.offsetWidth;
+        intro.classList.add('play');
+        mockPage.classList.add('play');
+      });
+    })();
+  </script>
+
+</body>
+</html>

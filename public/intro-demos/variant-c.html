@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuhnke Immobilien — Intro Konzept C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #fffffe;
+    --ink: #1a1a1c;
+    --gold: #b08d57;
+    --muted: #f4f2ee;
+    --grid-line: #dedbd4;
+    --ease-out-strong: cubic-bezier(0.22,1,0.36,1);
+    --ease-in-out-strong: cubic-bezier(0.7,0,0.2,1);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html,body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Montserrat', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ---------------------------------- */
+  /* MOCK PAGE BEHIND THE INTRO         */
+  /* ---------------------------------- */
+
+  .site{
+    min-height: 100vh;
+    background: var(--bg);
+  }
+
+  .site-header{
+    height: 76px;
+    display:flex;
+    align-items:center;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--muted);
+    position: sticky;
+    top:0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .brand-lockup{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+  }
+
+  #header-logo-slot{
+    width: 36px;
+    height: 48px;
+    position: relative;
+    flex-shrink:0;
+  }
+
+  #header-logo-slot svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity: 0;
+  }
+
+  .wordmark{
+    font-family: 'Lora', serif;
+    font-size: 19px;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .site-hero{
+    padding: 15vh 32px 20vh;
+    max-width: 920px;
+  }
+
+  .hero-eyebrow{
+    font-family:'Montserrat', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    margin: 0 0 18px;
+  }
+
+  .hero-headline{
+    font-family: 'Lora', serif;
+    font-weight: 500;
+    font-size: clamp(34px, 5.6vw, 64px);
+    line-height: 1.12;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .hero-sub{
+    margin-top: 22px;
+    max-width: 46ch;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #55534f;
+  }
+
+  /* ---------------------------------- */
+  /* INTRO OVERLAY                      */
+  /* ---------------------------------- */
+
+  .intro-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    visibility: visible;
+    /* No-JS fallback: fade the whole overlay out after ~2.8s */
+    animation: introFallbackOut 0.5s ease forwards;
+    animation-delay: 2.8s;
+  }
+
+  @keyframes introFallbackOut{
+    to{
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  /* Once JS confirms control, it cancels the fallback animation
+     on this element directly (inline style) and drives everything itself. */
+
+  .intro-grid{
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 900ms var(--ease-in-out-strong);
+  }
+
+  .intro-grid.is-in{
+    opacity: 1;
+  }
+
+  .intro-vignette{
+    position:absolute;
+    inset:0;
+    background: radial-gradient(circle at center, rgba(255,255,254,0) 0%, rgba(255,255,254,0.55) 72%, rgba(255,255,254,0.92) 100%);
+    pointer-events:none;
+  }
+
+  #intro-logo{
+    position: relative;
+    width: min(168px, 34vw);
+    height: min(223px, 45.2vw);
+    transform-origin: center center;
+    will-change: transform;
+  }
+
+  .logo-wrap{
+    position:absolute;
+    inset:0;
+  }
+
+  .logo-wrap svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  #lion-wrap{
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1050ms var(--ease-in-out-strong);
+  }
+
+  #lion-wrap.is-in{
+    clip-path: inset(0 0% 0 0);
+  }
+
+  #k-wrap{
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 760ms var(--ease-out-strong), transform 760ms var(--ease-out-strong);
+  }
+
+  #k-wrap.is-in{
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .intro-meta{
+    position:absolute;
+    inset: 0;
+    padding: 28px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    pointer-events:none;
+    opacity: 0;
+    transition: opacity 500ms var(--ease-in-out-strong);
+  }
+
+  .intro-meta.is-in{
+    opacity: 1;
+  }
+
+  .intro-progress{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    display:flex;
+    align-items:baseline;
+    gap: 6px;
+  }
+
+  .intro-progress .num{
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .intro-progress .unit{
+    color: #8c897f;
+    font-size: 11px;
+  }
+
+  .intro-claim{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    text-align: right;
+  }
+
+  /* Replay button */
+  .replay-btn{
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1100;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 13px 20px;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms var(--ease-in-out-strong), transform 200ms var(--ease-out-strong);
+  }
+
+  .replay-btn.is-visible{
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .replay-btn:hover{
+    transform: translateY(-1px);
+  }
+
+  .replay-btn svg{
+    width: 12px;
+    height: 12px;
+    flex-shrink:0;
+  }
+
+  @media (max-width: 480px){
+    .site-header{ padding: 0 18px; }
+    .site-hero{ padding: 12vh 18px 18vh; }
+    .hero-sub{ font-size: 14px; }
+    .intro-meta{ padding: 18px; }
+    .replay-btn{ right: 16px; bottom: 16px; padding: 11px 16px; font-size: 10px; }
+    #intro-logo{ width: min(140px, 38vw); height: min(186px, 50.5vw); }
+  }
+
+  /* Reduced motion: skip the intro entirely */
+  @media (prefers-reduced-motion: reduce){
+    .intro-overlay{ display: none !important; }
+    #header-logo-slot svg{ opacity: 1 !important; }
+    .replay-btn{ opacity: 0 !important; pointer-events: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============================ -->
+  <!-- MOCK SITE BEHIND THE INTRO   -->
+  <!-- ============================ -->
+  <div class="site">
+    <header class="site-header">
+      <div class="brand-lockup">
+        <div id="header-logo-slot">
+          <svg viewBox="500 380 1000 1330" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(0 2000) scale(0.1 -0.1)" fill="#1a1a1c"><path d="M7625 15613 c-243 -34 -455 -192 -573 -428 -41 -82 -86 -230 -108 -350 -25 -139 -25 -442 0 -620 60 -435 179 -791 408 -1222 l92 -172 28 20 c48 34 1825 1940 1836 1969 7 19 -354 309 -536 431 -402 267 -851 413 -1147 372z"/><path d="M11305 14859 c-87 -12 -209 -54 -298 -102 -45 -24 -152 -103 -254 -187 -151 -125 -220 -193 -502 -495 -180 -192 -491 -521 -692 -730 -200 -210 -499 -527 -664 -705 -165 -179 -388 -417 -495 -529 -309 -324 -577 -619 -873 -960 l-107 -123 103 -82 c56 -45 498 -397 982 -781 1183 -939 1618 -1296 2010 -1649 1051 -948 1629 -1774 1841 -2631 64 -261 78 -385 78 -695 0 -236 -3 -296 -22 -420 -62 -398 -153 -681 -349 -1083 -64 -131 -113 -240 -111 -243 7 -6 241 252 379 417 629 750 965 1436 1044 2133 12 104 7 387 -9 498 -72 503 -321 946 -730 1297 -50 43 -190 151 -311 241 -291 216 -399 305 -525 436 -173 179 -234 288 -340 604 -34 99 -76 216 -95 261 -70 167 -194 332 -378 504 -58 54 -105 101 -103 102 5 5 179 -39 364 -93 401 -116 658 -247 765 -391 l38 -51 92 -11 c341 -44 593 -29 947 55 269 64 514 151 744 264 138 67 293 161 319 193 106 130 229 591 231 867 1 170 -13 186 -366 405 -178 111 -203 130 -318 245 -69 69 -136 140 -148 158 l-24 33 59 -27 c194 -87 276 -114 386 -129 253 -34 627 -45 857 -25 126 11 278 36 300 50 10 6 -2 27 -54 87 -244 280 -609 643 -1246 1238 -140 131 -263 245 -273 255 -17 16 -16 23 42 184 87 241 87 216 -5 326 -90 109 -381 403 -539 545 -332 298 -639 501 -935 619 -274 108 -590 157 -815 125z m590 -1735 c259 -25 430 -59 501 -100 51 -29 160 -145 237 -252 67 -93 167 -256 167 -272 0 -6 -19 2 -42 18 -114 76 -233 135 -318 156 -36 8 -139 25 -230 36 -243 31 -289 44 -404 112 -87 52 -286 201 -351 264 l-50 49 40 6 c55 9 259 1 450 -17z"/><path d="M14993 11207 c-76 -57 -179 -138 -230 -180 -90 -76 -92 -79 -117 -155 -14 -42 -48 -165 -75 -272 -52 -205 -122 -453 -171 -607 l-30 -92 41 -103 c52 -130 60 -139 91 -104 64 73 239 394 334 611 151 348 351 1005 306 1005 -6 0 -73 -46 -149 -103z"/><path d="M14140 9633 c-315 -156 -724 -296 -1095 -373 -258 -53 -422 -72 -677 -77 -144 -4 -238 -9 -238 -15 0 -24 84 -179 130 -240 230 -305 763 -580 1270 -654 237 -34 396 1 542 120 192 156 312 468 311 806 0 160 -18 271 -54 342 -31 61 -76 125 -91 129 -7 2 -51 -15 -98 -38z"/><path d="M6926 9557 c-10 -83 -7 -960 4 -1202 27 -582 103 -1019 256 -1467 216 -632 603 -1217 1087 -1646 288 -255 517 -407 1122 -747 341 -191 478 -273 632 -376 518 -347 889 -747 1166 -1260 44 -79 85 -153 94 -164 14 -20 14 -20 29 0 70 93 259 564 329 821 136 497 140 1071 9 1602 -224 914 -811 1663 -2006 2560 -260 195 -405 298 -1185 840 -737 512 -899 628 -1249 893 -121 92 -234 174 -251 182 l-30 16 -7 -52z"/></g>
+            <g transform="translate(0 2000) scale(0.1 -0.1)" fill="#b08d57"><path d="M5576 11873 c2 -4026 1 -3953 45 -4221 121 -731 588 -1379 1359 -1884 223 -146 690 -404 690 -381 0 12 -43 71 -166 228 -445 570 -728 1263 -823 2015 -44 350 -46 413 -42 1510 1 575 5 1047 7 1049 5 5 131 -89 320 -240 388 -311 985 -751 1509 -1114 224 -155 339 -234 405 -280 25 -17 90 -62 145 -100 504 -347 999 -722 1360 -1031 189 -161 599 -571 731 -729 530 -638 795 -1201 901 -1910 14 -94 17 -185 18 -425 0 -345 -7 -421 -66 -705 -22 -104 -38 -201 -36 -215 l4 -25 8 25 c5 14 49 106 98 205 107 216 170 368 231 552 405 1245 66 2406 -1061 3629 -335 364 -719 720 -1293 1198 -325 271 -533 438 -1620 1301 -470 373 -861 683 -868 690 -12 10 7 37 106 152 195 226 548 618 682 758 214 223 455 480 709 755 135 146 429 459 655 695 532 557 527 552 771 815 168 181 246 255 396 380 247 205 360 262 574 293 l90 14 -71 21 c-212 65 -571 92 -976 74 -145 -7 -334 -19 -422 -27 -137 -12 -163 -17 -195 -38 -78 -52 -238 -208 -418 -405 -423 -465 -1688 -1821 -1812 -1942 -31 -31 -117 -123 -193 -206 -75 -83 -257 -274 -405 -424 l-268 -273 -6 54 c-8 72 -15 2005 -11 3114 l3 890 -533 3 -533 2 1 -3847z"/></g>
+          </svg>
+        </div>
+        <div class="wordmark">Kuhnke Immobilien</div>
+      </div>
+    </header>
+
+    <section class="site-hero">
+      <p class="hero-eyebrow">Kuhnke Immobilien · Berlin</p>
+      <h1 class="hero-headline">Immobilien mit Weitblick.</h1>
+      <p class="hero-sub">Ausgewählte Wohnadressen und Anlageimmobilien in Berlin — persönlich kuratiert, diskret begleitet und mit einem klaren Blick für Substanz und Lage.</p>
+    </section>
+  </div>
+
+  <!-- ============================ -->
+  <!-- INTRO OVERLAY                -->
+  <!-- ============================ -->
+  <div class="intro-overlay" id="introOverlay">
+    <div class="intro-grid" id="introGrid"></div>
+    <div class="intro-vignette"></div>
+
+    <div id="intro-logo">
+      <div class="logo-wrap" id="lion-wrap">
+        <svg viewBox="500 380 1000 1330" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(0 2000) scale(0.1 -0.1)" fill="#1a1a1c"><path d="M7625 15613 c-243 -34 -455 -192 -573 -428 -41 -82 -86 -230 -108 -350 -25 -139 -25 -442 0 -620 60 -435 179 -791 408 -1222 l92 -172 28 20 c48 34 1825 1940 1836 1969 7 19 -354 309 -536 431 -402 267 -851 413 -1147 372z"/><path d="M11305 14859 c-87 -12 -209 -54 -298 -102 -45 -24 -152 -103 -254 -187 -151 -125 -220 -193 -502 -495 -180 -192 -491 -521 -692 -730 -200 -210 -499 -527 -664 -705 -165 -179 -388 -417 -495 -529 -309 -324 -577 -619 -873 -960 l-107 -123 103 -82 c56 -45 498 -397 982 -781 1183 -939 1618 -1296 2010 -1649 1051 -948 1629 -1774 1841 -2631 64 -261 78 -385 78 -695 0 -236 -3 -296 -22 -420 -62 -398 -153 -681 -349 -1083 -64 -131 -113 -240 -111 -243 7 -6 241 252 379 417 629 750 965 1436 1044 2133 12 104 7 387 -9 498 -72 503 -321 946 -730 1297 -50 43 -190 151 -311 241 -291 216 -399 305 -525 436 -173 179 -234 288 -340 604 -34 99 -76 216 -95 261 -70 167 -194 332 -378 504 -58 54 -105 101 -103 102 5 5 179 -39 364 -93 401 -116 658 -247 765 -391 l38 -51 92 -11 c341 -44 593 -29 947 55 269 64 514 151 744 264 138 67 293 161 319 193 106 130 229 591 231 867 1 170 -13 186 -366 405 -178 111 -203 130 -318 245 -69 69 -136 140 -148 158 l-24 33 59 -27 c194 -87 276 -114 386 -129 253 -34 627 -45 857 -25 126 11 278 36 300 50 10 6 -2 27 -54 87 -244 280 -609 643 -1246 1238 -140 131 -263 245 -273 255 -17 16 -16 23 42 184 87 241 87 216 -5 326 -90 109 -381 403 -539 545 -332 298 -639 501 -935 619 -274 108 -590 157 -815 125z m590 -1735 c259 -25 430 -59 501 -100 51 -29 160 -145 237 -252 67 -93 167 -256 167 -272 0 -6 -19 2 -42 18 -114 76 -233 135 -318 156 -36 8 -139 25 -230 36 -243 31 -289 44 -404 112 -87 52 -286 201 -351 264 l-50 49 40 6 c55 9 259 1 450 -17z"/><path d="M14993 11207 c-76 -57 -179 -138 -230 -180 -90 -76 -92 -79 -117 -155 -14 -42 -48 -165 -75 -272 -52 -205 -122 -453 -171 -607 l-30 -92 41 -103 c52 -130 60 -139 91 -104 64 73 239 394 334 611 151 348 351 1005 306 1005 -6 0 -73 -46 -149 -103z"/><path d="M14140 9633 c-315 -156 -724 -296 -1095 -373 -258 -53 -422 -72 -677 -77 -144 -4 -238 -9 -238 -15 0 -24 84 -179 130 -240 230 -305 763 -580 1270 -654 237 -34 396 1 542 120 192 156 312 468 311 806 0 160 -18 271 -54 342 -31 61 -76 125 -91 129 -7 2 -51 -15 -98 -38z"/><path d="M6926 9557 c-10 -83 -7 -960 4 -1202 27 -582 103 -1019 256 -1467 216 -632 603 -1217 1087 -1646 288 -255 517 -407 1122 -747 341 -191 478 -273 632 -376 518 -347 889 -747 1166 -1260 44 -79 85 -153 94 -164 14 -20 14 -20 29 0 70 93 259 564 329 821 136 497 140 1071 9 1602 -224 914 -811 1663 -2006 2560 -260 195 -405 298 -1185 840 -737 512 -899 628 -1249 893 -121 92 -234 174 -251 182 l-30 16 -7 -52z"/></g>
+        </svg>
+      </div>
+      <div class="logo-wrap" id="k-wrap">
+        <svg viewBox="500 380 1000 1330" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(0 2000) scale(0.1 -0.1)" fill="#b08d57"><path d="M5576 11873 c2 -4026 1 -3953 45 -4221 121 -731 588 -1379 1359 -1884 223 -146 690 -404 690 -381 0 12 -43 71 -166 228 -445 570 -728 1263 -823 2015 -44 350 -46 413 -42 1510 1 575 5 1047 7 1049 5 5 131 -89 320 -240 388 -311 985 -751 1509 -1114 224 -155 339 -234 405 -280 25 -17 90 -62 145 -100 504 -347 999 -722 1360 -1031 189 -161 599 -571 731 -729 530 -638 795 -1201 901 -1910 14 -94 17 -185 18 -425 0 -345 -7 -421 -66 -705 -22 -104 -38 -201 -36 -215 l4 -25 8 25 c5 14 49 106 98 205 107 216 170 368 231 552 405 1245 66 2406 -1061 3629 -335 364 -719 720 -1293 1198 -325 271 -533 438 -1620 1301 -470 373 -861 683 -868 690 -12 10 7 37 106 152 195 226 548 618 682 758 214 223 455 480 709 755 135 146 429 459 655 695 532 557 527 552 771 815 168 181 246 255 396 380 247 205 360 262 574 293 l90 14 -71 21 c-212 65 -571 92 -976 74 -145 -7 -334 -19 -422 -27 -137 -12 -163 -17 -195 -38 -78 -52 -238 -208 -418 -405 -423 -465 -1688 -1821 -1812 -1942 -31 -31 -117 -123 -193 -206 -75 -83 -257 -274 -405 -424 l-268 -273 -6 54 c-8 72 -15 2005 -11 3114 l3 890 -533 3 -533 2 1 -3847z"/></g>
+        </svg>
+      </div>
+    </div>
+
+    <div class="intro-meta" id="introMeta">
+      <div class="intro-progress"><span class="num" id="introPercent">0</span><span class="unit">%</span></div>
+      <div class="intro-claim">Berlin mit Weitblick</div>
+    </div>
+  </div>
+
+  <button class="replay-btn" id="replayBtn" aria-label="Intro erneut abspielen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+    Replay
+  </button>
+
+<script>
+(function(){
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var overlay   = document.getElementById('introOverlay');
+  var grid      = document.getElementById('introGrid');
+  var lionWrap  = document.getElementById('lion-wrap');
+  var kWrap     = document.getElementById('k-wrap');
+  var meta      = document.getElementById('introMeta');
+  var percentEl = document.getElementById('introPercent');
+  var introLogo = document.getElementById('intro-logo');
+  var headerSlot= document.getElementById('header-logo-slot');
+  var headerSvg = headerSlot.querySelector('svg');
+  var replayBtn = document.getElementById('replayBtn');
+
+  if (prefersReduced) {
+    overlay.style.display = 'none';
+    headerSvg.style.opacity = '1';
+    replayBtn.classList.remove('is-visible');
+    return;
+  }
+
+  // JS is in control: cancel the CSS no-JS fallback animation.
+  overlay.style.animation = 'none';
+
+  var timers = [];
+  var rafId = null;
+
+  function clearAll(){
+    timers.forEach(function(t){ clearTimeout(t); });
+    timers = [];
+    if (rafId) cancelAnimationFrame(rafId);
+  }
+
+  function runTimeline(){
+    clearAll();
+
+    // reset state
+    overlay.style.visibility = 'visible';
+    overlay.style.pointerEvents = 'auto';
+    overlay.style.opacity = '1';
+    introLogo.style.transition = 'none';
+    introLogo.style.transform = 'translate(0px, 0px) scale(1)';
+    grid.classList.remove('is-in');
+    lionWrap.classList.remove('is-in');
+    kWrap.classList.remove('is-in');
+    meta.classList.remove('is-in');
+    percentEl.textContent = '0';
+    headerSvg.style.opacity = '0';
+    replayBtn.classList.remove('is-visible');
+    // force reflow so the "none" transition + reset actually applies
+    // before we re-enable transitions below
+    void introLogo.offsetWidth;
+    introLogo.style.transition = '';
+
+    // --- Timeline (ms) ---
+    var GRID_IN        = 0;
+    var REVEAL_START    = 480;
+    var K_START          = 620;
+    var PERCENT_START    = 480;
+    var PERCENT_END      = 1650;
+    var META_IN           = 350;
+    var FLIP_START        = 1780;
+    var FLIP_DUR           = 640;
+    var FADE_START        = 1980;
+    var FADE_DUR           = 460;
+    var CLEANUP            = FLIP_START + FLIP_DUR + 60; // ~2480ms total
+
+    timers.push(setTimeout(function(){ grid.classList.add('is-in'); }, GRID_IN));
+    timers.push(setTimeout(function(){ meta.classList.add('is-in'); }, META_IN));
+    timers.push(setTimeout(function(){ lionWrap.classList.add('is-in'); }, REVEAL_START));
+    timers.push(setTimeout(function(){ kWrap.classList.add('is-in'); }, K_START));
+
+    // percent counter
+    timers.push(setTimeout(function(){
+      var start = performance.now();
+      var span = PERCENT_END - PERCENT_START;
+      function tick(now){
+        var t = Math.min(1, (now - start) / span);
+        var eased = 1 - Math.pow(1 - t, 3);
+        percentEl.textContent = Math.round(eased * 100);
+        if (t < 1) {
+          rafId = requestAnimationFrame(tick);
+        } else {
+          percentEl.textContent = '100';
+        }
+      }
+      rafId = requestAnimationFrame(tick);
+    }, PERCENT_START));
+
+    // FLIP: fly the logo to the header slot
+    timers.push(setTimeout(function(){
+      var fromRect = introLogo.getBoundingClientRect();
+      var toRect = headerSlot.getBoundingClientRect();
+
+      var scale = toRect.width / fromRect.width;
+      var fromCenterX = fromRect.left + fromRect.width / 2;
+      var fromCenterY = fromRect.top + fromRect.height / 2;
+      var toCenterX = toRect.left + toRect.width / 2;
+      var toCenterY = toRect.top + toRect.height / 2;
+
+      var dx = toCenterX - fromCenterX;
+      var dy = toCenterY - fromCenterY;
+
+      introLogo.style.transition = 'transform ' + FLIP_DUR + 'ms var(--ease-in-out-strong)';
+      introLogo.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')';
+
+      meta.style.transition = 'opacity 320ms var(--ease-in-out-strong)';
+      meta.style.opacity = '0';
+    }, FLIP_START));
+
+    // Fade the overlay chrome out while the logo is still flying in
+    timers.push(setTimeout(function(){
+      overlay.style.transition = 'opacity ' + FADE_DUR + 'ms var(--ease-in-out-strong)';
+      overlay.style.opacity = '0';
+    }, FADE_START));
+
+    // Cleanup: swap in the real header logo, hide overlay
+    timers.push(setTimeout(function(){
+      headerSvg.style.transition = 'opacity 120ms linear';
+      headerSvg.style.opacity = '1';
+      overlay.style.visibility = 'hidden';
+      overlay.style.pointerEvents = 'none';
+      replayBtn.classList.add('is-visible');
+    }, CLEANUP));
+  }
+
+  runTimeline();
+
+  replayBtn.addEventListener('click', function(){
+    overlay.style.transition = 'none';
+    void overlay.offsetWidth;
+    overlay.style.transition = '';
+    runTimeline();
+  });
+})();
+</script>
+
+</body>
+</html>
