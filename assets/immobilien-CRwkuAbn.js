@@ -1,0 +1,1 @@
+import{E as e,w as t}from"./index-DjC9oyww.js";import{a as n,i as r}from"./site-chrome-BI8fx4db.js";var i=e();function a(){return(0,i.jsxs)(`div`,{className:`min-h-dvh bg-background`,children:[(0,i.jsx)(n,{}),(0,i.jsx)(t,{}),(0,i.jsx)(r,{})]})}export{a as component};
