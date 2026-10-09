@@ -27,3 +27,6 @@ dist-ssr
 .vite-out
 .vercel
 .env*
+
+# Referenz-Klone fremder Seiten (nicht ins Repo)
+.clone-cache
